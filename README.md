@@ -49,6 +49,7 @@ src/state.ts    axis values + the easing loop, Randomize, Animate
 src/ui.ts       builds sliders, chips and menus from the axes
 src/mouse.ts    sculpting with the mouse position
 src/svg.ts      exporting the word as an SVG file
+src/welcome.ts  the first-visit introduction card (reopen it with ?)
 src/style.css   all styling. Change --accent to re-theme
 default-font/   the open font the public site starts with
 ```

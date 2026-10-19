@@ -22,6 +22,7 @@
           <button id="random-btn">Randomize <kbd>R</kbd></button>
           <button id="copy-btn">Copy CSS</button>
           <button id="svg-btn" class="primary">Download SVG</button>
+          <button id="help-btn" class="icon" title="How it works">?</button>
           <button id="collapse-btn" class="icon" aria-expanded="true" title="Collapse controls">▾</button>
         </div>
       </header>
@@ -42,6 +43,21 @@
 
     <div id="drop-overlay">Drop a font to swap it in</div>
     <div id="toast" role="status"></div>
+
+    <!-- First-visit introduction. Closes with the button, Esc, or a click outside. -->
+    <dialog id="welcome" aria-labelledby="welcome-title">
+      <form method="dialog">
+        <h2 id="welcome-title">rot logo playground</h2>
+        <p>Shape a word by moving through the axes of a variable font. Have fun!</p>
+        <ul>
+          <li>Drop any variable font file on the page to explore its axes. It stays in your browser.</li>
+          <li>Move the mouse over the canvas to change slant and weight. Click to hold the shape.</li>
+          <li>Use the sliders and chips below for every other axis.</li>
+          <li>Copy the CSS or download the word as SVG when you like the result.</li>
+        </ul>
+        <button class="primary" autofocus>Start</button>
+      </form>
+    </dialog>
 
     <script type="module" src="/src/main.ts"></script>
   </body>

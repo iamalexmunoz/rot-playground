@@ -6,12 +6,14 @@
  *   ui.ts     builds sliders / chips / menus from the axes
  *   mouse.ts  sculpting with the mouse position
  *   svg.ts    exporting the word as an SVG file
+ *   welcome.ts  the first-visit introduction card
  */
 import { loadFont, loadDefaultFont, type LoadedFont } from './font'
 import { state, setAxes, setAnimating, randomize, step, variationSettings } from './state'
 import { buildSliders, updateSliders, buildChips, buildMouseMenus, syncAnimateButton, toast, escapeHtml, setFill } from './ui'
 import { enableMouseSculpt, holdMouse, updateHint } from './mouse'
 import { buildSvg, downloadFile } from './svg'
+import { setupWelcome, isWelcomeOpen } from './welcome'
 
 const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T
 
@@ -125,6 +127,7 @@ sizeInput.addEventListener('input', applySize)
 applySize()
 
 enableMouseSculpt(stage, specimen)
+setupWelcome()
 
 // ---------------------------------------------------------------------------
 // Keyboard: Space = Animate, R = Randomize, H = hide UI, Esc = stop editing.
@@ -137,6 +140,7 @@ function isTyping(target: EventTarget | null) {
 }
 
 window.addEventListener('keydown', (e) => {
+  if (isWelcomeOpen()) return // keys belong to the welcome card while it's open
   if (e.key === 'Escape') return specimen.blur()
   if (isTyping(e.target) || e.metaKey || e.ctrlKey || e.altKey) return
 
@@ -151,7 +155,7 @@ window.addEventListener('keydown', (e) => {
 })
 // Some browsers press a focused button on Space *release*, so block that too.
 window.addEventListener('keyup', (e) => {
-  if (e.code === 'Space' && !isTyping(e.target)) e.preventDefault()
+  if (e.code === 'Space' && !isTyping(e.target) && !isWelcomeOpen()) e.preventDefault()
 })
 
 // ---------------------------------------------------------------------------
