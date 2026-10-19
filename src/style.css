@@ -1,0 +1,233 @@
+/* ---------------------------------------------------------------------------
+   Design tokens. Change --accent to re-theme the whole thing.
+   --------------------------------------------------------------------------- */
+:root {
+  --accent: #ff4f1f;
+  --ink: #141414;
+  --muted: #9a9a9a;
+  --line: #ededed;
+  --bg: #ffffff;
+  --panel: #f5f5f4; /* the controls area: a quiet gray instead of a border */
+  --track: #dcdcdc; /* empty part of a slider */
+  --ease: cubic-bezier(0.22, 1, 0.36, 1); /* soft ease-out used everywhere */
+  --ui-font: system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+html, body { margin: 0; height: 100%; }
+
+body {
+  /* Two rows: the canvas takes all spare space, the panel sits underneath. */
+  display: grid;
+  grid-template-rows: 1fr auto;
+  height: 100dvh;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--ui-font);
+  font-size: 13px;
+  overflow: hidden;
+}
+
+button, select, input { font: inherit; color: inherit; }
+
+/* ---------------------------------------------------------------------------
+   Sliders: thin track, solid black thumb with no border.
+   Browsers style sliders differently, so there are two versions of each part:
+   ::-webkit-… for Chrome/Safari and ::-moz-… for Firefox.
+   --------------------------------------------------------------------------- */
+input[type='range'] {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 16px;
+  background: transparent;
+  cursor: pointer;
+}
+/* Chrome/Safari can't color the filled part on their own, so the track draws it
+   from --fill (a percentage set from the code, see setFill in ui.ts). */
+input[type='range']::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: 2px;
+  background: linear-gradient(to right, var(--accent) var(--fill, 0%), var(--track) var(--fill, 0%));
+}
+input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px;
+  height: 14px;
+  margin-top: -5px; /* centers the thumb on the track: (4px - 14px) / 2 */
+  border: none;
+  border-radius: 50%;
+  background: var(--ink);
+}
+input[type='range']::-moz-range-track { height: 4px; border-radius: 2px; background: var(--track); }
+input[type='range']::-moz-range-progress { height: 4px; border-radius: 2px; background: var(--accent); }
+input[type='range']::-moz-range-thumb { width: 14px; height: 14px; border: none; border-radius: 50%; background: var(--ink); }
+
+/* ---------------------------------------------------------------------------
+   Canvas & specimen
+   --------------------------------------------------------------------------- */
+#stage {
+  position: relative;
+  display: grid;
+  place-items: center;
+  padding: 6vh 6vw;
+  overflow: hidden;
+  cursor: crosshair;
+  touch-action: none; /* let a finger sculpt instead of scrolling */
+}
+#stage.held { cursor: default; }
+
+#specimen {
+  max-width: 100%;
+  font-size: 200px;
+  line-height: 1.05;
+  text-align: center;
+  overflow-wrap: anywhere;
+  outline: none;
+  transition: font-size 0.4s var(--ease);
+  cursor: text;
+}
+#specimen:focus { caret-color: var(--accent); }
+#specimen::selection { background: color-mix(in srgb, var(--accent) 25%, transparent); }
+
+.hint {
+  position: absolute;
+  top: 16px;
+  left: 0;
+  right: 0;
+  margin: 0;
+  text-align: center;
+  color: var(--muted);
+  pointer-events: none;
+  transition: opacity 0.4s var(--ease);
+}
+
+/* ---------------------------------------------------------------------------
+   Control panel
+   --------------------------------------------------------------------------- */
+#panel {
+  background: var(--panel);
+  transition: transform 0.4s var(--ease), opacity 0.4s var(--ease);
+}
+
+.panel-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 10px 20px;
+}
+.font-name span { color: var(--muted); margin-left: 6px; }
+
+.actions { display: flex; gap: 6px; align-items: center; }
+
+button {
+  border: 1px solid var(--line);
+  background: var(--bg);
+  border-radius: 999px;
+  padding: 6px 14px;
+  cursor: pointer;
+  transition: background 0.2s var(--ease), border-color 0.2s var(--ease), color 0.2s var(--ease);
+}
+button:hover { border-color: var(--ink); }
+/* The main call to action: solid black. */
+button.primary { background: var(--ink); border-color: var(--ink); color: white; }
+button.primary:hover { opacity: 0.85; }
+button.toggle[aria-pressed='true'] { background: var(--accent); border-color: var(--accent); color: white; }
+button.icon { width: 32px; padding: 6px 0; transition: transform 0.4s var(--ease); }
+
+kbd {
+  font-family: inherit;
+  font-size: 11px;
+  opacity: 0.5;
+  margin-left: 4px;
+}
+
+.panel-body {
+  max-height: 42vh;
+  overflow: auto;
+  padding: 4px 20px 20px;
+  transition: max-height 0.4s var(--ease), padding 0.4s var(--ease), opacity 0.3s var(--ease);
+}
+
+/* Collapsed: only the slim top bar remains. */
+#panel.collapsed .panel-body { max-height: 0; padding-top: 0; padding-bottom: 0; opacity: 0; }
+#panel.collapsed .icon { transform: rotate(180deg); }
+
+.settings { display: flex; flex-wrap: wrap; gap: 8px 28px; align-items: center; margin-bottom: 14px; }
+.settings label { display: flex; align-items: center; gap: 8px; color: var(--muted); }
+.settings input[type='range'] { width: 140px; }
+.settings output { color: var(--ink); min-width: 44px; font-variant-numeric: tabular-nums; }
+select {
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 3px 6px;
+  background: var(--bg);
+}
+
+/* Named-instance chips */
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
+.chips:empty { display: none; }
+.chip:hover { border-color: var(--accent); color: var(--accent); }
+
+/* One card per axis */
+.sliders {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px 28px;
+}
+.axis-head { display: flex; align-items: baseline; gap: 8px; }
+.axis-head .tag { font-family: ui-monospace, Menlo, monospace; font-size: 11px; color: var(--accent); }
+.axis-head .value { margin-left: auto; font-variant-numeric: tabular-nums; }
+.axis input { width: 100%; margin: 6px 0 2px; }
+.axis-range { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); }
+.empty { color: var(--muted); }
+
+/* H key: everything but the type fades away. */
+body.ui-hidden #panel { transform: translateY(100%); opacity: 0; pointer-events: none; }
+body.ui-hidden .hint { opacity: 0; }
+body.ui-hidden { grid-template-rows: 1fr 0; }
+
+/* ---------------------------------------------------------------------------
+   Overlays
+   --------------------------------------------------------------------------- */
+#drop-overlay {
+  position: fixed;
+  inset: 12px;
+  display: grid;
+  place-items: center;
+  border: 2px dashed var(--accent);
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--bg) 85%, transparent);
+  color: var(--accent);
+  font-size: 18px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s var(--ease);
+}
+body.dropping #drop-overlay { opacity: 1; }
+
+#toast {
+  position: fixed;
+  top: 16px;
+  left: 50%;
+  transform: translate(-50%, -8px);
+  max-width: calc(100vw - 32px);
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: var(--ink);
+  color: white;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s var(--ease), transform 0.3s var(--ease);
+}
+#toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+/* Narrow screens: let the bar wrap. */
+@media (max-width: 640px) {
+  .panel-bar { flex-wrap: wrap; padding: 10px 16px; }
+  .panel-body { padding: 4px 16px 16px; }
+}

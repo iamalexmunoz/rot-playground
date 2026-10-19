@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Font Playground</title>
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body>
+    <!-- The canvas: one big editable word. Moving the mouse over it sculpts the axes. -->
+    <main id="stage">
+      <div id="specimen" contenteditable="plaintext-only" spellcheck="false">rot</div>
+      <p id="hint" class="hint"></p>
+    </main>
+
+    <!-- The quiet control bar at the bottom. -->
+    <section id="panel">
+      <header class="panel-bar">
+        <div id="font-name" class="font-name">Loading font…</div>
+        <div class="actions">
+          <button id="animate-btn" class="toggle" aria-pressed="false">Animate <kbd>Space</kbd></button>
+          <button id="random-btn">Randomize <kbd>R</kbd></button>
+          <button id="copy-btn">Copy CSS</button>
+          <button id="svg-btn" class="primary">Download SVG</button>
+          <button id="collapse-btn" class="icon" aria-expanded="true" title="Collapse controls">▾</button>
+        </div>
+      </header>
+
+      <div class="panel-body">
+        <div class="settings">
+          <label>Size
+            <input type="range" id="size" min="24" max="480" value="200" />
+            <output id="size-out">200px</output>
+          </label>
+          <label>Mouse ↔ <select id="axis-x"></select></label>
+          <label>Mouse ↕ <select id="axis-y"></select></label>
+        </div>
+        <div id="instances" class="chips"></div>
+        <div id="sliders" class="sliders"></div>
+      </div>
+    </section>
+
+    <div id="drop-overlay">Drop a font to swap it in</div>
+    <div id="toast" role="status"></div>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
